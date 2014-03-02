@@ -21,13 +21,13 @@ var Generator = module.exports = function Generator(args, options) {
   });
   this.scriptAppName = this.appname + angularUtils.appName(this);
 
-  args = ['main'];
+  args = ['index', 'home'];
 
   if (typeof this.env.options.appPath === 'undefined') {
     try {
       this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
     } catch (e) {}
-    this.env.options.appPath = this.env.options.appPath || 'app';
+    this.env.options.appPath = this.env.options.appPath || 'src';
   }
 
   this.appPath = this.env.options.appPath;
@@ -55,9 +55,9 @@ var Generator = module.exports = function Generator(args, options) {
     args: args
   });
 
-  this.hookFor('angular:controller', {
-    args: args
-  });
+  // this.hookFor('angular:controller', {
+  //   args: args
+  // });
 
   this.on('end', function () {
     this.installDependencies({
@@ -211,7 +211,7 @@ Generator.prototype.askForModules = function askForModules() {
     }
 
     if (angMods.length) {
-      this.env.options.angularDeps = "\n  " + angMods.join(",\n  ") +"\n";
+      this.env.options.angularDeps = "  " + angMods.join(",\n  ");
     }
 
     cb();
@@ -225,7 +225,7 @@ Generator.prototype.readIndex = function readIndex() {
 
 Generator.prototype.bootstrapFiles = function bootstrapFiles() {
   var sass = this.compass;
-  var mainFile = 'main.' + (sass ? 's' : '') + 'css';
+  var mainFile = 'app.' + (sass ? 's' : '') + 'css';
 
   if (this.bootstrap && !sass) {
     this.copy('fonts/glyphicons-halflings-regular.eot', 'app/fonts/glyphicons-halflings-regular.eot');
@@ -234,17 +234,17 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
     this.copy('fonts/glyphicons-halflings-regular.woff', 'app/fonts/glyphicons-halflings-regular.woff');
   }
 
-  this.copy('styles/' + mainFile, 'app/styles/' + mainFile);
+  this.copy('styles/' + mainFile, 'src/app/' + mainFile);
 };
 
 Generator.prototype.appJs = function appJs() {
-  this.indexFile = this.appendFiles({
-    html: this.indexFile,
-    fileType: 'js',
-    optimizedPath: 'scripts/scripts.js',
-    sourceFileList: ['scripts/app.js', 'scripts/controllers/main.js'],
-    searchPath: ['.tmp', 'app']
-  });
+  // this.indexFile = this.appendFiles({
+  //   html: this.indexFile,
+  //   fileType: 'js',
+  //   optimizedPath: 'scripts/scripts.js',
+  //   sourceFileList: ['scripts/app.js', 'scripts/controllers/main.js'],
+  //   searchPath: ['.tmp', 'app']
+  // });
 };
 
 Generator.prototype.createIndexHtml = function createIndexHtml() {
@@ -261,7 +261,7 @@ Generator.prototype.packageFiles = function () {
 
 Generator.prototype.imageFiles = function () {
   this.sourceRoot(path.join(__dirname, 'templates'));
-  this.directory('images', 'app/images', true);
+  this.directory('images', 'src/assets/images', true);
 };
 
 Generator.prototype._injectDependencies = function _injectDependencies() {
@@ -275,10 +275,10 @@ Generator.prototype._injectDependencies = function _injectDependencies() {
     console.log(howToInstall);
   } else {
     wiredep({
-      directory: 'app/bower_components',
+      directory: 'src/bower_components',
       bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
-      ignorePath: 'app/',
-      htmlFile: 'app/index.html',
+      ignorePath: 'src/',
+      htmlFile: 'src/index.html',
       cssPattern: '<link rel="stylesheet" href="{{filePath}}">'
     });
   }

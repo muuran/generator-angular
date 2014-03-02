@@ -15,6 +15,7 @@ var Generator = module.exports = function Generator() {
   this.appname = this._.slugify(this._.humanize(this.appname));
   this.scriptAppName = this._.camelize(this.appname) + angularUtils.appName(this);
 
+  this.packagePath = (this.args.length >= 2) ? this.args[1] : '';
   this.cameledName = this._.camelize(this.name);
   this.classedName = this._.classify(this.name);
 
@@ -22,7 +23,7 @@ var Generator = module.exports = function Generator() {
     try {
       this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
     } catch (e) {}
-    this.env.options.appPath = this.env.options.appPath || 'app';
+    this.env.options.appPath = this.env.options.appPath || 'src';
   }
 
   if (typeof this.env.options.testPath === 'undefined') {
@@ -102,9 +103,9 @@ Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate,
     this.cameledName = this.classedName;
   }
 
-  this.appTemplate(appTemplate, path.join('scripts', targetDirectory, this.name));
-  this.testTemplate(testTemplate, path.join(targetDirectory, this.name));
+  this.appTemplate(appTemplate, path.join('app', this.packagePath, this.name));
+  this.testTemplate(testTemplate, path.join(this.packagePath, this.name));
   if (!skipAdd) {
-    this.addScriptToIndex(path.join(targetDirectory, this.name));
+    //this.addScriptToIndex(path.join(targetDirectory, this.name));
   }
 };
